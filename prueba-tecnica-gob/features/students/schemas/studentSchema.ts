@@ -78,7 +78,7 @@ export function parseStudentRow(
     promedio_graduacion: parseNullableNumber(
       normalizedRow['promedio_graduacion']
     ),
-    graduado: parseBoolean(normalizedRow['graduado']),
+    graduado: parseGraduado(normalizedRow['graduado'] ?? normalizedRow['estado']),
   };
 
   const result = studentSchema.safeParse(rawData);
@@ -120,6 +120,23 @@ function parseBoolean(value: unknown): boolean {
       lower === 'sí' ||
       lower === '1' ||
       lower === 'yes'
+    );
+  }
+  if (typeof value === 'number') return value === 1;
+  return false;
+}
+
+function parseGraduado(value: unknown): boolean {
+  if (typeof value === 'boolean') return value;
+  if (typeof value === 'string') {
+    const lower = value.toLowerCase().trim();
+    return (
+      lower === 'true' ||
+      lower === 'si' ||
+      lower === 'sí' ||
+      lower === '1' ||
+      lower === 'yes' ||
+      lower === 'graduado'
     );
   }
   if (typeof value === 'number') return value === 1;
